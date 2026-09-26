@@ -1,5 +1,23 @@
 # Changelog / Novedades
 
+## 12.1.2
+
+**English**
+- Cooling: always shows the full view (no Essential/Advanced) and a new "Hide headers without a fan" option at the top.
+- Calibration goes down to 0 % and waits at 100 % until the fan reaches its real maximum (graphics card fans need several seconds).
+- Graphics card fans: when the curve asks for less than the card's minimum (30 % on many NVIDIA cards), SpotLay hands them back to the driver so they can stop at idle (0 RPM).
+- Curve edits apply immediately.
+- Copy / paste fan settings between fans, and "Paste to all".
+- Fixes: temperature lists no longer go blank or keep showing "(no reading)"; the fan control notice is translated.
+
+**Español**
+- Refrigeración: siempre en vista completa (sin Esencial/Avanzado) y nueva opción «Ocultar conectores sin ventilador» arriba.
+- La calibración baja hasta 0 % y espera al 100 % hasta que el ventilador llega a su máximo real (los de la gráfica tardan varios segundos).
+- Ventiladores de la gráfica: cuando la curva pide menos que el mínimo de la tarjeta (30 % en muchas NVIDIA), SpotLay se los devuelve al driver para que puedan pararse en reposo (0 RPM).
+- Los cambios en la curva se aplican al momento.
+- Copiar / pegar ajustes entre ventiladores, y «Pegar en todos».
+- Arreglos: las listas de temperaturas ya no se quedan en blanco ni con «(sin lectura)»; el aviso del control de ventiladores está traducido.
+
 ## 12.1.1
 
 **English**
