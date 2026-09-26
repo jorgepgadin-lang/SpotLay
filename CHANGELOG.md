@@ -1,5 +1,13 @@
 # Changelog / Novedades
 
+## 12.1.1
+
+**English**
+- SpotLay no longer starts PresentMon for apps that are not games (browsers, Claude, Discord, Spotify, VS Code…). It kept relaunching it in the background for no reason.
+
+**Español**
+- SpotLay ya no lanza PresentMon con apps que no son juegos (navegadores, Claude, Discord, Spotify, VS Code…). Lo relanzaba una y otra vez en segundo plano sin motivo.
+
 ## 12.1.0 — first public release / primera versión pública
 
 **English**
