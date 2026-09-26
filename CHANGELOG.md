@@ -1,5 +1,13 @@
 # Changelog / Novedades
 
+## 12.1.3
+
+**English**
+- Translation fixes: a few texts on Home and Cooling were still in Spanish with the app in English.
+
+**Español**
+- Arreglos de traducción: algunos textos de Inicio y Refrigeración seguían en español con la app en inglés.
+
 ## 12.1.2
 
 **English**

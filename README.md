@@ -4,10 +4,6 @@
 
 **See how many frames your GPU really renders.** With Frame Generation on, the FPS counter shows the total, including generated frames. SpotLay splits it: **real FPS, generated FPS and the Frame Generation multiplier** (x2, x3, x4… and whether NVIDIA's Multi Frame Generation is **fixed or dynamic**), measured live from the game, not estimated.
 
-```
-FG  x4 DYNAMIC      FPS 140
-Real FPS  35        Generated FPS 105
-```
 
 ![SpotLay overlay in Cyberpunk 2077: x5 dynamic Frame Generation, 164 FPS of which 33 real and 131 generated](docs/screenshots/overlay.jpg)
 

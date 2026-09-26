@@ -4,10 +4,6 @@
 
 **Mira cuántos frames renderiza de verdad tu gráfica.** Con Frame Generation activado, el contador de FPS enseña el total, generados incluidos. SpotLay lo separa: **FPS reales, FPS generados y el multiplicador de Frame Generation** (x2, x3, x4… y si el Multi Frame Generation de NVIDIA es **fijo o dinámico**), medido en directo en el juego, no estimado.
 
-```
-FG  x4 DINÁMICO     FPS 140
-FPS reales  35      FPS generados 105
-```
 
 ![Overlay de SpotLay en Cyberpunk 2077: Frame Generation x5 dinámico, 164 FPS de los que 33 son reales y 131 generados](docs/screenshots/overlay.jpg)
 
