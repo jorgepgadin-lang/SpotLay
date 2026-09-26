@@ -9,6 +9,8 @@ FG  x4 DYNAMIC      FPS 140
 Real FPS  35        Generated FPS 105
 ```
 
+![SpotLay overlay in Cyberpunk 2077: x5 dynamic Frame Generation, 164 FPS of which 33 real and 131 generated](docs/screenshots/overlay.jpg)
+
 SpotLay draws a clean overlay on top of your games with real FPS, generated FPS, the Frame Generation multiplier, 1% / 0.1% lows and any sensor of your PC (temperatures, power, clocks, fans…). It also records every gaming session, can control your fans with custom curves and can warn you — or shut Windows down in an orderly way — if a sensor gets dangerously hot.
 
 
@@ -25,6 +27,20 @@ SpotLay draws a clean overlay on top of your games with real FPS, generated FPS,
 - **English and Spanish.** Chosen on first start and changeable in Settings.
 - **Automatic updates** from this page.
 
+
+## Screenshots
+
+**Live overlay editor** — the overlay on screen shows every change as you make it.
+![Overlay editor](docs/screenshots/overlay-editor.png)
+
+**Performance history** — every session recorded automatically, with stutters marked.
+![Performance](docs/screenshots/performance.png)
+
+**Fan control** — curves, calibration and 0 RPM at idle for graphics card fans.
+![Cooling](docs/screenshots/cooling.png)
+
+**Home** — 5 overlay layouts, each with its own hotkey.
+![Home](docs/screenshots/home.png)
 
 ## Requirements
 
