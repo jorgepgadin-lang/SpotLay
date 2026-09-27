@@ -13,6 +13,7 @@ SpotLay draws a clean overlay on top of your games with real FPS, generated FPS,
 ## Features
 
 - **Frame Generation, measured, not guessed.** Real (rendered) FPS, generated FPS, total FPS and the multiplier (x2, x3, x4…), including NVIDIA Dynamic Multi Frame Generation (shown as `x4 DYNAMIC` / `FIXED`).
+- **Nothing injected into the game.** SpotLay never touches the game process: it reads Windows event tracing (ETW) and draws its own window on top, so there is nothing inside the game for an anti-cheat to flag.
 - **Stability.** 1% and 0.1% lows for displayed frames and for real frames, plus an in-game frametime graph.
 - **Any sensor.** GPU, CPU, memory, motherboard, drives, network and fans. If a sensor does not exist on your PC, SpotLay shows `—`: it never shows a substitute value.
 - **Live overlay editor.** Edit the overlay while you look at it on screen: drag it with the mouse, Ctrl + drag a card to reorder it, change colors, sizes and gauges (number, arc, ring, bars, timeline) and see every change instantly.
@@ -68,8 +69,8 @@ SpotLay checks this page for a new version when it starts and every few hours. Y
 |---|---|
 | Show / hide the overlay | Shift + F8 |
 | Show / hide the frametime graph | Shift + F9 |
-| Switch to layout 1…5 | Ctrl + Alt + 1…5 |
-| Back to the game's layout | Ctrl + Alt + 0 |
+| Switch to layout 1…5 | Ctrl + Shift + 1…5 |
+| Back to the game's layout | Ctrl + Shift + 0 |
 | Move the overlay in game | Ctrl + Shift + arrows |
 | Cancel an emergency shutdown | Ctrl + Alt + F9 |
 
@@ -91,7 +92,7 @@ SpotLay has no telemetry and no account. The only internet connection it makes i
 
 ## FAQ
 
-**The overlay does not appear over my game.** SpotLay cannot draw over *exclusive* fullscreen. Use borderless / windowed fullscreen in the game.
+**The overlay does not appear over my game.** SpotLay cannot draw over *exclusive* fullscreen. Use borderless / windowed fullscreen in the game. SpotLay tells you on the Home page (and with a notification) when a game is in exclusive fullscreen.
 
 **A sensor shows `—`.** That sensor is not exposed on your PC (by the driver or by the hardware), so there is no data to show.
 

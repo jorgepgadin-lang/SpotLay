@@ -13,6 +13,7 @@ SpotLay dibuja encima de tus juegos un overlay limpio con los FPS reales, los ge
 ## Qué hace
 
 - **Frame Generation medido, no supuesto.** FPS reales (renderizados), FPS generados, FPS totales y el multiplicador (x2, x3, x4…), también con el Multi Frame Generation dinámico de NVIDIA (se ve como `x4 DINÁMICO` / `FIJO`).
+- **Nada inyectado en el juego.** SpotLay no toca el proceso del juego: lee el seguimiento de eventos de Windows (ETW) y dibuja su propia ventana encima, así que dentro del juego no hay nada que un anti-cheat pueda detectar.
 - **Estabilidad.** 1% y 0,1% low de los frames a pantalla y de los reales, y una gráfica de frametime en el juego.
 - **Cualquier sensor.** Gráfica, CPU, memoria, placa base, discos, red y ventiladores. Si un sensor no existe en tu PC, SpotLay muestra `—`: nunca pone otro valor en su lugar.
 - **Editor del overlay en directo.** Editas el overlay mientras lo ves en pantalla: lo arrastras con el ratón, con Ctrl + arrastrar cambias de sitio una tarjeta, y cambias colores, tamaños y gráficos (número, arco, anillo, barras, línea) viendo cada cambio al momento.
@@ -68,8 +69,8 @@ SpotLay mira en esta página si hay versión nueva al arrancar y cada pocas hora
 |---|---|
 | Mostrar / ocultar el overlay | Mayús + F8 |
 | Mostrar / ocultar la gráfica de frametime | Mayús + F9 |
-| Cambiar al diseño 1…5 | Ctrl + Alt + 1…5 |
-| Volver al diseño del juego | Ctrl + Alt + 0 |
+| Cambiar al diseño 1…5 | Ctrl + Mayús + 1…5 |
+| Volver al diseño del juego | Ctrl + Mayús + 0 |
 | Mover el overlay en el juego | Ctrl + Mayús + flechas |
 | Cancelar un apagado de emergencia | Ctrl + Alt + F9 |
 
@@ -91,7 +92,7 @@ SpotLay no tiene telemetría ni cuenta. La única conexión a internet que hace 
 
 ## Preguntas frecuentes
 
-**El overlay no sale encima del juego.** SpotLay no puede dibujar encima de la pantalla completa *exclusiva*. Pon el juego en pantalla completa sin bordes o en ventana.
+**El overlay no sale encima del juego.** SpotLay no puede dibujar encima de la pantalla completa *exclusiva*. Pon el juego en pantalla completa sin bordes o en ventana. SpotLay te avisa en Inicio (y con una notificación) cuando un juego está en pantalla completa exclusiva.
 
 **Un sensor sale como `—`.** Ese sensor no existe en tu PC (el driver o el hardware no lo dan), así que no hay dato que mostrar.
 

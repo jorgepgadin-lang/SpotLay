@@ -1,5 +1,17 @@
 # Changelog / Novedades
 
+## 12.1.4
+
+**English**
+- Layout hotkeys are now **Ctrl + Shift + 1…5** and **Ctrl + Shift + 0** (back to the game's layout). The old Ctrl + Alt + number is AltGr + number on many keyboards, so it blocked typing @, #, € and others while SpotLay was running. If you kept the default keys they change automatically; keys you chose yourself are not touched.
+- If you pick a Ctrl + Alt combination that types a character with AltGr on your keyboard, SpotLay now warns "Clashes with AltGr (@)".
+- Exclusive fullscreen: the overlay cannot be drawn over it, and now SpotLay tells you. Home shows a warning while that game is open (use borderless window instead).
+
+**Español**
+- Las teclas de los diseños pasan a **Ctrl + Mayús + 1…5** y **Ctrl + Mayús + 0** (volver al diseño del juego). Ctrl + Alt + número es AltGr + número en muchos teclados, así que con SpotLay abierto no dejaba escribir la @, #, € y otros. Si tenías las teclas de fábrica cambian solas; las que elegiste tú no se tocan.
+- Si eliges una combinación Ctrl + Alt que escribe un carácter con AltGr en tu teclado, SpotLay avisa «Choca con AltGr (@)».
+- Pantalla completa exclusiva: el overlay no se puede dibujar encima, y ahora SpotLay te lo dice. Inicio muestra un aviso mientras ese juego está abierto (usa ventana sin bordes).
+
 ## 12.1.3
 
 **English**
