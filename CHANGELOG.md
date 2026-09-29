@@ -1,5 +1,19 @@
 # Changelog / Novedades
 
+## 12.1.6
+
+**English**
+- Performance: the FPS and hardware charts are now one telemetry-style view: stacked panels on the same timeline, dotted grid, legend on top of each panel and vertical axis titles.
+- Hardware chart: two scales, the unit of the first line you tick on the left and a second unit on the right (for example °C and GB). At most two units at a time; other chips are dimmed until you untick one.
+- The hardware chart now has the same fade under its main line as the FPS chart, and axes use round numbers (20, 40, 60, 80…).
+- Fix: the unit label no longer overlaps the top number of the axis.
+
+**Español**
+- Rendimiento: las gráficas de FPS y de hardware son ahora una sola vista estilo telemetría: paneles apilados con el mismo eje de tiempo, rejilla punteada, leyenda arriba de cada panel y títulos de eje en vertical.
+- Gráfica de hardware: dos escalas, la unidad de la primera línea que marques a la izquierda y otra unidad a la derecha (por ejemplo °C y GB). Como mucho dos unidades a la vez; los demás chips se atenúan hasta que desmarques uno.
+- La gráfica de hardware lleva el mismo difuminado bajo su línea principal que la de FPS, y los ejes usan números redondos (20, 40, 60, 80…).
+- Arreglo: la unidad ya no se pisa con el número de arriba del eje.
+
 ## 12.1.5
 
 **English**
