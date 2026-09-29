@@ -18,7 +18,7 @@ SpotLay dibuja encima de tus juegos un overlay limpio con los FPS reales, los ge
 - **Cualquier sensor.** Gráfica, CPU, memoria, placa base, discos, red y ventiladores. Si un sensor no existe en tu PC, SpotLay muestra `—`: nunca pone otro valor en su lugar.
 - **Editor del overlay en directo.** Editas el overlay mientras lo ves en pantalla: lo arrastras con el ratón, con Ctrl + arrastrar cambias de sitio una tarjeta, y cambias colores, tamaños y gráficos (número, arco, anillo, barras, línea) viendo cada cambio al momento.
 - **Diseños y perfiles.** 5 diseños globales con su tecla y un diseño propio para cada juego.
-- **Historial de rendimiento.** Cada partida se graba sola: FPS en el tiempo, lows, tirones y temperaturas.
+- **Historial de rendimiento.** Cada partida se graba sola: FPS en el tiempo, lows y tirones, con una segunda gráfica debajo de temperaturas, consumo, reloj, uso, VRAM y RAM (eliges qué líneas ver). Las dos se pueden ver a pantalla completa.
 - **Control de ventiladores.** Curvas por ventilador, identificar y calibrar canales, temperatura crítica, y todo vuelve a la BIOS al cerrar SpotLay.
 - **Avisos y apagado de emergencia.** Avisos por sensor encima del juego y, si lo activas, un apagado ordenado de Windows con cuenta atrás que puedes cancelar.
 - **Español e inglés.** Se elige al abrirlo por primera vez y se cambia en Ajustes.

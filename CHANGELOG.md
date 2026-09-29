@@ -1,5 +1,19 @@
 # Changelog / Novedades
 
+## 12.1.5
+
+**English**
+- Performance: new hardware chart under the FPS chart, on the same timeline. Pick the lines you want (GPU / hot spot / VRAM / CPU temperature, GPU and CPU power, GPU clock, GPU and CPU load, VRAM and RAM); hovering shows that second on both charts. Temperatures, GPU power, clock and load also appear in sessions recorded before this version; the rest only in new sessions.
+- Performance: "Fullscreen" button to see both charts full screen (Esc to go back).
+- Start with Windows: the startup task is recreated on each new version (older tasks could stop launching SpotLay at sign-in), and running a second copy from another folder no longer takes over the startup task.
+- After an update, Windows refreshes SpotLay's icon, so desktop shortcuts no longer turn blank.
+
+**Español**
+- Rendimiento: nueva gráfica de hardware debajo de la de FPS, con el mismo eje de tiempo. Eliges qué líneas ver (temperatura de GPU / hot spot / VRAM / CPU, consumo de GPU y CPU, reloj de GPU, uso de GPU y CPU, VRAM y RAM); al pasar el ratón se marca ese segundo en las dos gráficas. Temperaturas, consumo y reloj de GPU y uso de GPU salen también en las partidas grabadas antes de esta versión; lo demás solo en partidas nuevas.
+- Rendimiento: botón «Pantalla completa» para ver las dos gráficas en grande (Esc para volver).
+- Arrancar con Windows: la tarea de arranque se vuelve a crear en cada versión nueva (las tareas antiguas podían dejar de abrir SpotLay al iniciar sesión), y abrir otra copia desde otra carpeta ya no se queda con el arranque.
+- Tras actualizarse, Windows recarga el icono de SpotLay: los accesos directos del escritorio ya no se quedan en blanco.
+
 ## 12.1.4
 
 **English**
