@@ -1,0 +1,17 @@
+<Window x:Class="SpotLay.App.Overlay.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:SpotLay.App.Infrastructure"
+        xmlns:ov="clr-namespace:SpotLay.App.Overlay"
+        Title="{l:T 'SpotLay Overlay'}"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        Focusable="False"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight">
+    <ov:OverlayView />
+</Window>

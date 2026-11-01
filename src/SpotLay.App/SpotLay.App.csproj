@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <UseWPF>true</UseWPF>
+    <!-- Solo para el icono de la bandeja (NotifyIcon). -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>SpotLay</AssemblyName>
+    <!-- Versión publicada: la sube release.ps1 y el actualizador la compara con GitHub. -->
+    <Version>12.1.6</Version>
+    <RootNamespace>SpotLay.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\SpotLay.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- WPF0001: ThemeMode (tema Fluent) sigue marcado como experimental.
+         WFO0003: aviso de WinForms sobre el DPI del manifiesto; WPF necesita esa declaracion. -->
+    <NoWarn>$(NoWarn);WPF0001;WFO0003</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SpotLay.Core\SpotLay.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\SpotLay.ico" />
+    <Resource Include="Assets\SpotLay.png" />
+  </ItemGroup>
+</Project>

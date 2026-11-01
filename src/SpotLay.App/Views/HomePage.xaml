@@ -1,0 +1,149 @@
+<UserControl x:Class="SpotLay.App.Views.HomePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:SpotLay.App.Infrastructure">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="36,0,36,32">
+        <StackPanel MaxWidth="1180" HorizontalAlignment="Stretch">
+
+            <!-- Estado -->
+            <Border Style="{StaticResource SL.Card}" Margin="0,0,0,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding GameTitle}" FontFamily="{StaticResource SL.DisplayFont}" FontSize="22" FontWeight="SemiBold"
+                                   TextTrimming="CharacterEllipsis" />
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <Ellipse Width="7" Height="7" Margin="0,0,7,0" VerticalAlignment="Center">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Fill" Value="{DynamicResource SL.Bad}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CaptureOk}" Value="True">
+                                                <Setter Property="Fill" Value="{DynamicResource SL.Good}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
+                            <TextBlock Style="{StaticResource SL.Body}">
+                                <Run Text="{Binding GameDetail, Mode=OneWay}" /><Run Text="{l:T '  ·  Overlay: '}" /><Run Text="{Binding ActiveLayoutName, Mode=OneWay}" FontWeight="SemiBold" />
+                            </TextBlock>
+                        </StackPanel>
+                        <TextBlock Text="{Binding CaptureStatus}" Style="{StaticResource SL.Caption}" Margin="14,2,0,0" />
+                        <TextBlock Text="{Binding ExclusiveWarning}" Style="{StaticResource SL.Body}" Foreground="{DynamicResource SL.Warn}"
+                                   TextWrapping="Wrap" Margin="0,8,0,0"
+                                   Visibility="{Binding ExclusiveWarning, Converter={StaticResource StringToVis}}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <StackPanel Margin="0,0,28,0" HorizontalAlignment="Right">
+                            <TextBlock Text="{l:T 'FPS'}" Style="{StaticResource SL.Eyebrow}" HorizontalAlignment="Right" />
+                            <TextBlock Text="{Binding Fps}" Style="{StaticResource SL.BigNumber}" Foreground="{DynamicResource SL.Accent}" HorizontalAlignment="Right" />
+                        </StackPanel>
+                        <UniformGrid Columns="5" VerticalAlignment="Center">
+                            <UniformGrid.Resources>
+                                <Style TargetType="StackPanel"><Setter Property="Margin" Value="14,0,0,0" /></Style>
+                            </UniformGrid.Resources>
+                            <StackPanel><TextBlock Text="{l:T 'GPU'}" Style="{StaticResource SL.Eyebrow}" /><TextBlock Text="{Binding GpuTemp}" FontSize="16" FontWeight="SemiBold" /></StackPanel>
+                            <StackPanel><TextBlock Text="{l:T 'HOT SPOT'}" Style="{StaticResource SL.Eyebrow}" /><TextBlock Text="{Binding HotSpot}" FontSize="16" FontWeight="SemiBold" /></StackPanel>
+                            <StackPanel><TextBlock Text="{l:T 'CPU'}" Style="{StaticResource SL.Eyebrow}" /><TextBlock Text="{Binding CpuTemp}" FontSize="16" FontWeight="SemiBold" /></StackPanel>
+                            <StackPanel><TextBlock Text="{l:T 'USO GPU'}" Style="{StaticResource SL.Eyebrow}" /><TextBlock Text="{Binding GpuLoad}" FontSize="16" FontWeight="SemiBold" /></StackPanel>
+                            <StackPanel><TextBlock Text="{l:T 'USO CPU'}" Style="{StaticResource SL.Eyebrow}" /><TextBlock Text="{Binding CpuLoad}" FontSize="16" FontWeight="SemiBold" /></StackPanel>
+                        </UniformGrid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Los 5 diseños -->
+            <Border Style="{StaticResource SL.Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{l:T 'Diseños del overlay'}" Style="{StaticResource SL.SectionTitle}" />
+                    <TextBlock Style="{StaticResource SL.Caption}" Margin="0,4,0,0"
+                               Text="{l:T 'Pulsa su tecla en el juego para cambiar al momento. La tecla manda sobre el perfil del juego hasta que cambies de juego.'}" />
+                    <ItemsControl ItemsSource="{Binding Presets}" Margin="0,14,0,0">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><UniformGrid Columns="5" /></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="8" Padding="12" Margin="0,0,10,0" BorderThickness="1.5">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource SL.SurfaceAlt}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource SL.Stroke}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource SL.AccentSoft}" />
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource SL.Accent}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+                                        <Grid>
+                                            <TextBlock Style="{StaticResource SL.Eyebrow}"><Run Text="{l:T 'DISEÑO '}" /><Run Text="{Binding Number, Mode=OneWay}" /></TextBlock>
+                                            <TextBlock Text="{l:T 'EN USO'}" Style="{StaticResource SL.Eyebrow}" Foreground="{DynamicResource SL.Accent}" HorizontalAlignment="Right"
+                                                       Visibility="{Binding IsActive, Converter={StaticResource BoolToVis}}" />
+                                        </Grid>
+                                        <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" FontWeight="SemiBold" Margin="0,8,0,0" />
+                                        <TextBlock Text="{Binding Summary}" Style="{StaticResource SL.Caption}" Margin="0,4,0,0" />
+                                        <Button Content="{Binding HotkeyText}" Command="{Binding CaptureCommand}" Style="{StaticResource SL.SubtleButton}"
+                                                Margin="0,10,0,0" HorizontalAlignment="Stretch" ToolTip="{l:T 'Clic y pulsa la combinación que quieras'}" />
+                                        <TextBlock Text="{Binding HotkeyStatus}" Style="{StaticResource SL.Caption}" Foreground="{DynamicResource SL.Warn}"
+                                                   Visibility="{Binding HotkeyStatus, Converter={StaticResource StringToVis}}" Margin="0,4,0,0" />
+                                        <UniformGrid Columns="2" Margin="0,10,0,0">
+                                            <Button Content="{l:T 'Usar'}" Command="{Binding ActivateCommand}" Style="{StaticResource SL.AccentButton}" Margin="0,0,4,0" Padding="8,6" />
+                                            <Button Content="{l:T 'Editar'}" Command="{Binding EditCommand}" Style="{StaticResource SL.SubtleButton}" Margin="4,0,0,0" />
+                                        </UniformGrid>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <StackPanel Orientation="Horizontal" Margin="0,14,0,0">
+                        <TextBlock Text="{l:T 'Volver al diseño del juego (quita el diseño puesto con tecla):'}" Style="{StaticResource SL.Body}"
+                                   VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <Button Content="{Binding GameHotkeyText}" Command="{Binding CaptureGameHotkeyCommand}" Style="{StaticResource SL.SubtleButton}"
+                                MinWidth="150" ToolTip="{l:T 'Clic y pulsa la combinación que quieras'}" />
+                        <TextBlock Text="{Binding GameHotkeyStatus}" Style="{StaticResource SL.Caption}" Foreground="{DynamicResource SL.Warn}"
+                                   VerticalAlignment="Center" Margin="10,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Accesos rápidos -->
+            <Border Style="{StaticResource SL.Card}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox IsChecked="{Binding OverlayEnabled, Mode=TwoWay}" VerticalAlignment="Top">
+                        <StackPanel Margin="4,0,0,0">
+                            <TextBlock Text="{l:T 'Overlay activado'}" FontWeight="SemiBold" Foreground="{DynamicResource SL.Text}" />
+                            <TextBlock Text="{l:T 'Apagado, SpotLay sigue midiendo.'}" Style="{StaticResource SL.Caption}" />
+                        </StackPanel>
+                    </CheckBox>
+                    <CheckBox Grid.Column="1" IsChecked="{Binding FansEnabled, Mode=TwoWay}" VerticalAlignment="Top">
+                        <StackPanel Margin="4,0,0,0">
+                            <TextBlock Text="{l:T 'Control de ventiladores'}" FontWeight="SemiBold" Foreground="{DynamicResource SL.Text}" />
+                            <TextBlock Style="{StaticResource SL.Caption}">
+                                <Hyperlink Command="{Binding GoCoolingCommand}"><Run Text="{l:T 'Ver curvas'}" /></Hyperlink>
+                            </TextBlock>
+                        </StackPanel>
+                    </CheckBox>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="{l:T 'Avisos y apagado'}" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding SafetySummary}" Style="{StaticResource SL.Caption}" />
+                        <TextBlock Style="{StaticResource SL.Caption}">
+                            <Hyperlink Command="{Binding GoAlertsCommand}"><Run Text="{l:T 'Configurar'}" /></Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

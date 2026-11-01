@@ -1,0 +1,90 @@
+<UserControl x:Class="SpotLay.App.Views.SessionChartsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:SpotLay.App.Infrastructure"
+             xmlns:pages="clr-namespace:SpotLay.App.Views">
+    <!-- Gráfica de FPS arriba y de hardware abajo, mismo eje de tiempo. Se usa en la
+         pestaña Rendimiento y en su pantalla completa. DataContext: PerformanceViewModel. -->
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="Orange" Color="#FF8A00" />
+        <SolidColorBrush x:Key="Yellow" Color="#FFD60A" />
+        <Style x:Key="SeriesChip" TargetType="CheckBox">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="Foreground" Value="{DynamicResource SL.Text}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Border x:Name="Chip" CornerRadius="6" Padding="10,5" BorderThickness="1"
+                                Background="{DynamicResource SL.SurfaceAlt}" BorderBrush="{DynamicResource SL.Stroke}">
+                            <StackPanel Orientation="Horizontal">
+                                <Line X1="0" Y1="0" X2="16" Y2="0" StrokeThickness="3" VerticalAlignment="Center" Margin="0,0,7,0"
+                                      Stroke="{Binding Brush}">
+                                    <Line.Style>
+                                        <Style TargetType="Line">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Dashed}" Value="True">
+                                                    <Setter Property="StrokeDashArray" Value="1.4 0.7" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Line.Style>
+                                </Line>
+                                <TextBlock Text="{Binding Label}" FontSize="12" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter TargetName="Chip" Property="Opacity" Value="0.45" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Chip" Property="BorderBrush" Value="{Binding Brush}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chip" Property="Background" Value="{DynamicResource SL.SurfaceHover}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Chip" Property="Opacity" Value="0.25" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Dos paneles pegados, estilo telemetría: FPS arriba, hardware abajo (con el eje de tiempo). -->
+        <Border Background="{DynamicResource SL.SurfaceAlt}" CornerRadius="8" Padding="0,4,0,2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" MinHeight="150" />
+                    <RowDefinition Height="1" />
+                    <RowDefinition Height="2*" MinHeight="130" />
+                </Grid.RowDefinitions>
+                <pages:SessionChart Session="{Binding Full}" HoverIndex="{Binding HoverIndex}" />
+                <Border Grid.Row="1" Background="{DynamicResource SL.Stroke}" Margin="58,0,58,0" />
+                <pages:HardwareChart Grid.Row="2" Session="{Binding Full}" Series="{Binding SelectedSeries}" HoverIndex="{Binding HoverIndex}" />
+            </Grid>
+        </Border>
+
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding SeriesToggles}" Margin="0,10,0,0"
+                      Visibility="{Binding HasSessions, Converter={StaticResource BoolToVis}}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <CheckBox Style="{StaticResource SeriesChip}" IsChecked="{Binding IsChecked, Mode=TwoWay}" IsEnabled="{Binding IsEnabled}"
+                              ToolTip="{Binding Hint}" ToolTipService.ShowOnDisabled="True" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+</UserControl>

@@ -1,0 +1,416 @@
+<UserControl x:Class="SpotLay.App.Views.OverlayPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:SpotLay.App.Infrastructure"
+             xmlns:vm="clr-namespace:SpotLay.App.ViewModels"
+             xmlns:ov="clr-namespace:SpotLay.App.Overlay"
+             xmlns:pages="clr-namespace:SpotLay.App.Views"
+             x:Name="Root">
+    <UserControl.Resources>
+        <Style x:Key="Section" TargetType="Border" BasedOn="{StaticResource SL.Card}">
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+        <Style x:Key="Field" TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,14,0,0" />
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Margin="36,0,36,24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="0" />
+            <ColumnDefinition Width="0" />
+        </Grid.ColumnDefinitions>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+            <StackPanel>
+                <!-- Qué diseño se edita -->
+                <Border Style="{StaticResource Section}">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="{l:T 'Estás editando'}" Style="{StaticResource SL.Label}" VerticalAlignment="Center" Margin="0,0,14,0" />
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding Targets}" SelectedItem="{Binding SelectedTarget}"
+                                      DisplayMemberPath="Name" MaxWidth="360" HorizontalAlignment="Left" MinWidth="260" />
+                        </Grid>
+                        <TextBlock Text="{Binding EditingHint}" Style="{StaticResource SL.Caption}" Margin="0,8,0,0" />
+                        <TextBlock Style="{StaticResource SL.Caption}" Margin="0,4,0,0" TextWrapping="Wrap"
+                                   Text="{l:T 'El overlay de la pantalla muestra lo que editas. Arrástralo con el ratón para moverlo (se imanta a bordes y centro; con Alt no). En el juego: Ctrl + Mayús + flechas.'}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- ============ ESENCIAL ============ -->
+                <StackPanel Visibility="{Binding IsAdvanced, Converter={StaticResource BoolToVisInverse}}">
+                    <Border Style="{StaticResource Section}">
+                        <StackPanel>
+                            <TextBlock Text="{l:T 'Plantilla'}" Style="{StaticResource SL.SectionTitle}" />
+                            <TextBlock Text="{l:T 'Elige una forma y SpotLay ajusta tamaños y gráficos por ti.'}" Style="{StaticResource SL.Caption}" Margin="0,4,0,12" />
+                            <ItemsControl ItemsSource="{Binding Templates}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><UniformGrid Columns="3" /></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <RadioButton GroupName="Template" Style="{StaticResource SL.ChoiceCard}" Padding="14" Margin="0,0,10,0"
+                                                     IsChecked="{Binding IsSelected, Mode=TwoWay}">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Glyph}" FontFamily="{StaticResource SL.IconFont}" FontSize="22" Foreground="{DynamicResource SL.Accent}" />
+                                                <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold" Margin="0,10,0,0" />
+                                                <TextBlock Text="{Binding Description}" Style="{StaticResource SL.Caption}" Margin="0,4,0,0" />
+                                            </StackPanel>
+                                        </RadioButton>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Section}">
+                        <StackPanel>
+                            <TextBlock Text="{l:T 'Qué mostrar'}" Style="{StaticResource SL.SectionTitle}" />
+                            <TextBlock Text="{l:T 'Activa bloques completos. En Avanzado puedes elegir sensor a sensor.'}" Style="{StaticResource SL.Caption}" Margin="0,4,0,8" />
+                            <ItemsControl ItemsSource="{Binding Blocks}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsOn, Mode=TwoWay}" Margin="0,8,0,0">
+                                            <StackPanel Margin="4,0,0,0">
+                                                <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold" Foreground="{DynamicResource SL.Text}" />
+                                                <TextBlock Text="{Binding Description}" Style="{StaticResource SL.Caption}" />
+                                            </StackPanel>
+                                        </CheckBox>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Style="{StaticResource Section}">
+                        <StackPanel>
+                            <TextBlock Text="{l:T 'Tamaño y posición'}" Style="{StaticResource SL.SectionTitle}" />
+                            <StackPanel Style="{StaticResource Field}">
+                                <Grid>
+                                    <TextBlock Text="{l:T 'Tamaño'}" Style="{StaticResource SL.Label}" />
+                                    <TextBlock Text="{Binding SizeText}" Style="{StaticResource SL.Caption}" HorizontalAlignment="Right" />
+                                </Grid>
+                                <Slider Minimum="0.6" Maximum="2" SmallChange="0.05" LargeChange="0.1" TickFrequency="0.05" IsSnapToTickEnabled="True"
+                                        Value="{Binding Scale, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Style="{StaticResource Field}">
+                                <Grid>
+                                    <TextBlock Text="{l:T 'Opacidad del fondo'}" Style="{StaticResource SL.Label}" />
+                                    <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right">
+                                        <Run Text="{Binding BackgroundOpacity, Mode=OneWay}" /><Run Text=" %" />
+                                    </TextBlock>
+                                </Grid>
+                                <Slider Minimum="0" Maximum="100" SmallChange="5" TickFrequency="5" IsSnapToTickEnabled="True"
+                                        Value="{Binding BackgroundOpacity, Mode=TwoWay}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- ============ AVANZADO ============ -->
+                <StackPanel Visibility="{Binding IsAdvanced, Converter={StaticResource BoolToVis}}">
+                    <!-- Lo que se toca una vez: plegado y compacto. -->
+                    <Border Style="{StaticResource Section}">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{l:T 'Diseño general'}" Style="{StaticResource SL.SectionTitle}" />
+                                    <TextBlock Text="{Binding DesignSummary}" Style="{StaticResource SL.Caption}" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <!-- Fondo, etiquetas, valores y unidades. -->
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0">
+                                    <StackPanel.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Width" Value="18" />
+                                            <Setter Property="Height" Value="18" />
+                                            <Setter Property="CornerRadius" Value="4" />
+                                            <Setter Property="Margin" Value="0,0,6,0" />
+                                            <Setter Property="BorderThickness" Value="1" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource SL.Stroke}" />
+                                        </Style>
+                                    </StackPanel.Resources>
+                                    <Border Background="{Binding BackgroundColor, Converter={StaticResource HexToBrush}}" ToolTip="{l:T 'Fondo'}" />
+                                    <Border Background="{Binding LabelColor, Converter={StaticResource HexToBrush}}" ToolTip="{l:T 'Etiquetas'}" />
+                                    <Border Background="{Binding ValueColor, Converter={StaticResource HexToBrush}}" ToolTip="{l:T 'Valores y gráficos'}" />
+                                    <Border Background="{Binding UnitColor, Converter={StaticResource HexToBrush}}" ToolTip="{l:T 'Unidades'}" />
+                                </StackPanel>
+                                <ToggleButton Grid.Column="2" IsChecked="{Binding DesignExpanded, Mode=TwoWay}" Padding="12,5" VerticalAlignment="Center">
+                                    <ToggleButton.Style>
+                                        <Style TargetType="ToggleButton" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                                            <Setter Property="Content" Value="{l:T 'Mostrar ajustes  ▾'}" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter Property="Content" Value="{l:T 'Ocultar ajustes  ▴'}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ToggleButton.Style>
+                                </ToggleButton>
+                            </Grid>
+                            <StackPanel Margin="0,4,0,4" TextElement.FontSize="12"
+                                        Visibility="{Binding DesignExpanded, Converter={StaticResource BoolToVis}}">
+                                <StackPanel.Resources>
+                                    <Style TargetType="StackPanel" x:Key="Mini">
+                                        <Setter Property="Margin" Value="0,10,16,0" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <UniformGrid Columns="3">
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <TextBlock Text="{l:T 'Forma'}" Style="{StaticResource SL.Label}" />
+                                        <ComboBox ItemsSource="{Binding TemplateOptions}" SelectedValuePath="Key" DisplayMemberPath="Label"
+                                                  SelectedValue="{Binding Template, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <TextBlock Text="{l:T 'Fuente'}" Style="{StaticResource SL.Label}" />
+                                        <ComboBox ItemsSource="{Binding FontOptions}" SelectedItem="{Binding FontFamily, Mode=TwoWay}"
+                                                  VirtualizingPanel.IsVirtualizing="True" MaxDropDownHeight="360" />
+                                    </StackPanel>
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <TextBlock Text="{l:T 'Efecto de las cifras'}" Style="{StaticResource SL.Label}" />
+                                        <ComboBox ItemsSource="{Binding EffectOptions}" SelectedValuePath="Key" DisplayMemberPath="Label"
+                                                  SelectedValue="{Binding ValueEffect, Mode=TwoWay}" />
+                                    </StackPanel>
+
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <Grid>
+                                            <TextBlock Text="{l:T 'Columnas'}" Style="{StaticResource SL.Label}" />
+                                            <TextBlock Text="{Binding Columns}" Style="{StaticResource SL.Caption}" HorizontalAlignment="Right" />
+                                        </Grid>
+                                        <Slider Minimum="1" Maximum="8" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Columns, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <Grid>
+                                            <TextBlock Text="{l:T 'Ancho de tarjeta'}" Style="{StaticResource SL.Label}" />
+                                            <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right">
+                                                <Run Text="{Binding TileWidth, Mode=OneWay}" /><Run Text="{l:T ' px'}" />
+                                            </TextBlock>
+                                        </Grid>
+                                        <Slider Minimum="70" Maximum="300" TickFrequency="2" IsSnapToTickEnabled="True" Value="{Binding TileWidth, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <Grid>
+                                            <TextBlock Text="{l:T 'Separación'}" Style="{StaticResource SL.Label}" />
+                                            <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right">
+                                                <Run Text="{Binding Gap, Mode=OneWay}" /><Run Text="{l:T ' px'}" />
+                                            </TextBlock>
+                                        </Grid>
+                                        <Slider Minimum="0" Maximum="24" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding Gap, Mode=TwoWay}" />
+                                    </StackPanel>
+
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <Grid>
+                                            <TextBlock Text="{l:T 'Tamaño general'}" Style="{StaticResource SL.Label}" />
+                                            <TextBlock Text="{Binding SizeText}" Style="{StaticResource SL.Caption}" HorizontalAlignment="Right" />
+                                        </Grid>
+                                        <Slider Minimum="0.6" Maximum="2" TickFrequency="0.05" IsSnapToTickEnabled="True" Value="{Binding Scale, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <Grid>
+                                            <TextBlock Text="{l:T 'Opacidad del fondo'}" Style="{StaticResource SL.Label}" />
+                                            <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right">
+                                                <Run Text="{Binding BackgroundOpacity, Mode=OneWay}" /><Run Text=" %" />
+                                            </TextBlock>
+                                        </Grid>
+                                        <Slider Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="{Binding BackgroundOpacity, Mode=TwoWay}" />
+                                    </StackPanel>
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <Grid>
+                                            <TextBlock Text="{l:T 'Esquinas'}" Style="{StaticResource SL.Label}" />
+                                            <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right">
+                                                <Run Text="{Binding CornerRadius, Mode=OneWay}" /><Run Text="{l:T ' px'}" />
+                                            </TextBlock>
+                                        </Grid>
+                                        <Slider Minimum="0" Maximum="30" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding CornerRadius, Mode=TwoWay}" />
+                                    </StackPanel>
+                                </UniformGrid>
+                                <CheckBox Content="{l:T 'Cifras en negrita'}" IsChecked="{Binding FontBold, Mode=TwoWay}" Margin="0,12,0,0" />
+
+                                <TextBlock Text="{l:T 'Colores por defecto (métricas sin color propio)'}" Style="{StaticResource SL.Label}" Margin="0,16,0,0" />
+                                <UniformGrid Columns="2">
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <TextBlock Text="{l:T 'Fondo'}" Style="{StaticResource SL.Caption}" />
+                                        <pages:ColorRow Color="{Binding BackgroundColor}" Margin="0,4,0,0" />
+                                    </StackPanel>
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <TextBlock Text="{l:T 'Etiquetas'}" Style="{StaticResource SL.Caption}" />
+                                        <pages:ColorRow Color="{Binding LabelColor}" Margin="0,4,0,0" />
+                                    </StackPanel>
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <TextBlock Text="{l:T 'Valores y gráficos'}" Style="{StaticResource SL.Caption}" />
+                                        <pages:ColorRow Color="{Binding ValueColor}" Margin="0,4,0,0" />
+                                    </StackPanel>
+                                    <StackPanel Style="{StaticResource Mini}">
+                                        <TextBlock Text="{l:T 'Unidades'}" Style="{StaticResource SL.Caption}" />
+                                        <pages:ColorRow Color="{Binding UnitColor}" Margin="0,4,0,0" />
+                                    </StackPanel>
+                                </UniformGrid>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    <Border Style="{StaticResource Section}">
+                        <StackPanel>
+                            <TextBlock Text="{l:T 'Métricas del overlay'}" Style="{StaticResource SL.SectionTitle}" />
+                            <TextBlock Text="{l:T 'Ordena, quita y da estilo a cada métrica. Para añadir, ve a Métricas.'}" Style="{StaticResource SL.Caption}" Margin="0,4,0,12" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="280" />
+                                    <ColumnDefinition Width="24" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <DockPanel>
+                                    <StackPanel DockPanel.Dock="Bottom" Margin="0,8,0,0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="&#xE74A;" Style="{StaticResource SL.IconButton}" Command="{Binding MoveUpCommand}" ToolTip="{l:T 'Subir'}" />
+                                            <Button Content="&#xE74B;" Style="{StaticResource SL.IconButton}" Command="{Binding MoveDownCommand}" ToolTip="{l:T 'Bajar'}" Margin="6,0,0,0" />
+                                            <Button Content="{l:T 'Quitar'}" Style="{StaticResource SL.SubtleButton}" Command="{Binding RemoveMetricCommand}" Margin="6,0,0,0" />
+                                            <Button Content="{l:T 'Todas'}" Style="{StaticResource SL.SubtleButton}" Click="SelectAll_Click" Margin="6,0,0,0"
+                                                    ToolTip="{l:T 'Seleccionar todas las métricas'}" />
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                                            <Button Content="{l:T 'Copiar estilo'}" Style="{StaticResource SL.SubtleButton}" Command="{Binding CopyStyleCommand}"
+                                                    ToolTip="{l:T 'Copia colores, tamaños y unidad de esta métrica'}" />
+                                            <Button Content="{l:T 'Pegar estilo'}" Style="{StaticResource SL.SubtleButton}" Command="{Binding PasteStyleCommand}" Margin="6,0,0,0"
+                                                    ToolTip="{l:T 'Lo pega en las seleccionadas (no cambia el gráfico, el texto de la etiqueta ni la escala)'}" />
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding CopiedText}" Style="{StaticResource SL.Caption}" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock Text="{Binding SelectionText}" Style="{StaticResource SL.Caption}" Margin="0,2,0,0" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                    <ListBox x:Name="MetricList" ItemsSource="{Binding LayoutMetrics}" SelectedItem="{Binding SelectedMetric}" Height="460"
+                                             SelectionMode="Extended" SelectionChanged="MetricList_SelectionChanged">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="0,2">
+                                                    <TextBlock Text="{Binding Label}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                                    <TextBlock Text="{Binding Device}" Style="{StaticResource SL.Caption}" TextTrimming="CharacterEllipsis" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </DockPanel>
+
+                                <TextBlock Grid.Column="2" Text="{l:T 'Selecciona una métrica de la lista para cambiar su estilo.'}"
+                                           Style="{StaticResource SL.Body}" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                           Visibility="{Binding HasSelectedMetric, Converter={StaticResource BoolToVisInverse}}" />
+
+                                <StackPanel Grid.Column="2" Visibility="{Binding HasSelectedMetric, Converter={StaticResource BoolToVis}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="16" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="16" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{l:T 'Texto de la etiqueta'}" Style="{StaticResource SL.Label}" />
+                                            <TextBox Text="{Binding StyleLabel, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" IsEnabled="{Binding IsSingleSelection}"
+                                                     ToolTip="{l:T 'Vacío = nombre por defecto'}" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="{l:T 'Gráfico'}" Style="{StaticResource SL.Label}" />
+                                            <ComboBox ItemsSource="{Binding VisualizationOptions}" SelectedValuePath="Key" DisplayMemberPath="Label"
+                                                      SelectedValue="{Binding StyleVisualization, Mode=TwoWay}" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="4">
+                                            <TextBlock Text="{l:T 'Unidad (°C, RPM, W…)'}" Style="{StaticResource SL.Label}" />
+                                            <ComboBox ItemsSource="{Binding UnitPositionOptions}" SelectedValuePath="Key" DisplayMemberPath="Label"
+                                                      SelectedValue="{Binding StyleUnitPosition, Mode=TwoWay}" AutomationProperties.Name="Posición de la unidad"
+                                                      ToolTip="{l:T 'Automática: al lado; en arco y anillo pasa debajo si no cabe (la cifra se reduce para caber). En FG, «DINÁMICO» va debajo.'}" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <WrapPanel>
+                                        <StackPanel Margin="0,0,40,0">
+                                            <StackPanel Style="{StaticResource Field}">
+                                                <TextBlock Text="{l:T 'Color del valor y del gráfico'}" Style="{StaticResource SL.Label}" />
+                                                <pages:ColorRow Color="{Binding StyleValueColor}" FallbackColor="{Binding ValueColor}" Margin="0,6,0,0" />
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Field}">
+                                                <TextBlock Text="{l:T 'Color de la etiqueta'}" Style="{StaticResource SL.Label}" />
+                                                <pages:ColorRow Color="{Binding StyleLabelColor}" FallbackColor="{Binding LabelColor}" Margin="0,6,0,0" />
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Field}">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{l:T 'Color de la unidad'}" Style="{StaticResource SL.Label}" VerticalAlignment="Center" />
+                                                    <Button Content="{l:T 'Igual que el valor'}" Style="{StaticResource SL.SubtleButton}" Command="{Binding UnitLikeValueCommand}"
+                                                            Padding="8,1" Margin="12,0,0,0" FontSize="12" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                                <pages:ColorRow Color="{Binding StyleUnitColor}" FallbackColor="{Binding UnitColor}" Margin="0,6,0,0" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <!-- La métrica que se edita, a tamaño real y en vivo: junto a los colores, o debajo si no cabe. -->
+                                        <Border VerticalAlignment="Center" Margin="0,14,0,0"
+                                                MinWidth="170" MinHeight="120" Padding="16" CornerRadius="8" Background="{DynamicResource SL.PreviewBackdrop}">
+                                            <StackPanel>
+                                                <TextBlock Text="{l:T 'ASÍ SE VE'}" Style="{StaticResource SL.Eyebrow}" HorizontalAlignment="Center" Margin="0,0,0,10" />
+                                                <ov:OverlayView DataContext="{Binding TilePreview}" HorizontalAlignment="Center" />
+                                            </StackPanel>
+                                        </Border>
+                                    </WrapPanel>
+
+                                    <UniformGrid Columns="3" Margin="0,14,0,0">
+                                        <StackPanel Margin="0,0,12,0">
+                                            <Grid>
+                                                <TextBlock Text="{l:T 'Etiqueta'}" Style="{StaticResource SL.Label}" />
+                                                <TextBlock Text="{Binding StyleLabelSize}" Style="{StaticResource SL.Caption}" HorizontalAlignment="Right" />
+                                            </Grid>
+                                            <Slider Minimum="6" Maximum="40" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding StyleLabelSize, Mode=TwoWay}" />
+                                        </StackPanel>
+                                        <StackPanel Margin="0,0,12,0">
+                                            <Grid>
+                                                <TextBlock Text="{l:T 'Valor'}" Style="{StaticResource SL.Label}" />
+                                                <TextBlock Text="{Binding StyleValueSize}" Style="{StaticResource SL.Caption}" HorizontalAlignment="Right" />
+                                            </Grid>
+                                            <Slider Minimum="8" Maximum="72" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding StyleValueSize, Mode=TwoWay}" />
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <Grid>
+                                                <TextBlock Text="{l:T 'Unidad'}" Style="{StaticResource SL.Label}" />
+                                                <TextBlock Text="{Binding StyleUnitSize}" Style="{StaticResource SL.Caption}" HorizontalAlignment="Right" />
+                                            </Grid>
+                                            <Slider Minimum="6" Maximum="40" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding StyleUnitSize, Mode=TwoWay}" />
+                                        </StackPanel>
+                                    </UniformGrid>
+
+                                    <Grid Margin="0,14,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="12" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox Content="{l:T 'Escala automática'}" IsChecked="{Binding StyleAutoScale, Mode=TwoWay}" VerticalAlignment="Bottom" Margin="0,0,16,6" />
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="{l:T 'Mínimo'}" Style="{StaticResource SL.Label}" />
+                                            <TextBox Text="{Binding StyleMin, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="3">
+                                            <TextBlock Text="{l:T 'Máximo'}" Style="{StaticResource SL.Label}" />
+                                            <TextBox Text="{Binding StyleMax, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <Button Content="{l:T 'Aplicar este estilo a todas las métricas'}" Command="{Binding ApplyStyleToAllCommand}"
+                                            Style="{StaticResource SL.SubtleButton}" HorizontalAlignment="Left" Margin="0,16,0,0" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+    </Grid>
+</UserControl>

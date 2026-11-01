@@ -1,0 +1,22 @@
+<Application x:Class="SpotLay.App.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:SpotLay.App.Infrastructure"
+             ShutdownMode="OnExplicitShutdown">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Styles.xaml" />
+                <ResourceDictionary Source="Themes/Dark.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <infra:BoolToVisibilityConverter x:Key="BoolToVis" />
+            <infra:NotConverter x:Key="Not" />
+            <infra:AllTrueToVisibilityConverter x:Key="AllTrueToVis" />
+            <infra:BoolToVisibilityConverter x:Key="BoolToVisInverse" Invert="True" />
+            <infra:StringToVisibilityConverter x:Key="StringToVis" />
+            <infra:StringToVisibilityConverter x:Key="StringToVisInverse" Invert="True" />
+            <infra:HexToBrushConverter x:Key="HexToBrush" />
+            <infra:ColorParameterConverter x:Key="ColorParam" />
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SpotLay.App/SpotLay.App.csproj" />
+    <Project Path="src/SpotLay.Core/SpotLay.Core.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,113 @@
+<UserControl x:Class="SpotLay.App.Views.MetricsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:SpotLay.App.Infrastructure">
+    <UserControl.Resources>
+        <Style x:Key="Chip" TargetType="ListBoxItem">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Foreground" Value="{DynamicResource SL.TextSecondary}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="B" CornerRadius="6" Padding="14,6" BorderThickness="1"
+                                Background="{DynamicResource SL.SurfaceAlt}" BorderBrush="{DynamicResource SL.Stroke}">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="B" Property="Background" Value="{DynamicResource SL.SurfaceHover}" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="B" Property="Background" Value="{DynamicResource SL.Accent}" />
+                                <Setter TargetName="B" Property="BorderBrush" Value="{DynamicResource SL.Accent}" />
+                                <Setter Property="Foreground" Value="{DynamicResource SL.OnAccent}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <DockPanel Margin="36,0,36,24">
+        <StackPanel DockPanel.Dock="Top">
+            <Border Style="{StaticResource SL.Card}" Padding="16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid>
+                        <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged, Delay=150}"
+                                 ToolTip="{l:T 'Buscar por nombre, dispositivo o grupo'}" MinHeight="34" VerticalContentAlignment="Center" />
+                        <TextBlock Text="{l:T 'Buscar sensores: CPU, VRAM, temperatura, ventilador, disco…'}" IsHitTestVisible="False"
+                                   Style="{StaticResource SL.Caption}" FontSize="13" VerticalAlignment="Center" Margin="12,0,0,0"
+                                   Visibility="{Binding Search, Converter={StaticResource StringToVisInverse}}" />
+                    </Grid>
+                    <TextBlock Grid.Column="1" Style="{StaticResource SL.Caption}" VerticalAlignment="Center" Margin="16,0,0,0">
+                        <Run Text="{l:T 'Añadiendo a:'}" /> <Run Text="{Binding EditingName, Mode=OneWay}" FontWeight="SemiBold" Foreground="{DynamicResource SL.Text}" />
+                        <Run Text=" · " /><Run Text="{Binding SelectedCount, Mode=OneWay}" /><Run Text="{l:T ' en el overlay'}" />
+                    </TextBlock>
+                </Grid>
+            </Border>
+            <ListBox ItemsSource="{Binding Filters}" SelectedValuePath="Key" SelectedValue="{Binding Filter, Mode=TwoWay}"
+                     ItemContainerStyle="{StaticResource Chip}" Background="Transparent" BorderThickness="0" Margin="0,14,0,0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Label}" FontSize="13" FontWeight="SemiBold" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Text="{Binding HiddenHint}" Style="{StaticResource SL.Caption}" Margin="2,2,0,10"
+                       Visibility="{Binding HiddenHint, Converter={StaticResource StringToVis}}" />
+        </StackPanel>
+
+        <Border Style="{StaticResource SL.Card}" Padding="0">
+            <ListBox ItemsSource="{Binding View}" Background="Transparent" BorderThickness="0"
+                     VirtualizingPanel.IsVirtualizing="True"
+                     VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                     VirtualizingPanel.VirtualizationMode="Recycling"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" Style="{StaticResource SL.Eyebrow}" Margin="18,16,0,6" />
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </ListBox.GroupStyle>
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        <Setter Property="Padding" Value="14,6" />
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" VerticalAlignment="Center" MinWidth="0" />
+                            <StackPanel Grid.Column="1" Margin="6,0,12,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Label}" FontSize="13" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{Binding Device}" Style="{StaticResource SL.Caption}" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                            <TextBlock Grid.Column="2" Text="{Binding Value}" FontSize="13" Foreground="{DynamicResource SL.TextSecondary}"
+                                       VerticalAlignment="Center" Typography.NumeralAlignment="Tabular" MinWidth="90" TextAlignment="Right" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
+    </DockPanel>
+</UserControl>

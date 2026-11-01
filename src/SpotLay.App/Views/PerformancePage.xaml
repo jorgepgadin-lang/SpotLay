@@ -1,0 +1,164 @@
+<UserControl x:Class="SpotLay.App.Views.PerformancePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:SpotLay.App.Infrastructure"
+             xmlns:pages="clr-namespace:SpotLay.App.Views">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="Orange" Color="#FF8A00" />
+        <SolidColorBrush x:Key="Yellow" Color="#FFD60A" />
+        <Style x:Key="Num" TargetType="TextBlock" BasedOn="{StaticResource SL.BigNumber}">
+            <Setter Property="FontFamily" Value="Cascadia Mono, Consolas, Segoe UI" />
+            <Setter Property="FontSize" Value="30" />
+        </Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="36,0,36,32">
+        <StackPanel MaxWidth="1180">
+
+            <!-- Partida elegida -->
+            <Border Style="{StaticResource SL.Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Title2}" Style="{StaticResource SL.SectionTitle}" FontSize="20" />
+                            <TextBlock Text="{Binding Subtitle2}" Style="{StaticResource SL.Caption}" Margin="0,2,0,0" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                            <TextBlock Text="{Binding Recording}" Foreground="{StaticResource Orange}" FontSize="12" FontWeight="SemiBold"
+                                       VerticalAlignment="Center" Margin="0,0,14,0" />
+                            <Button Content="{l:T 'Pantalla completa'}" Command="{Binding FullScreenCommand}" Style="{StaticResource SL.SubtleButton}"
+                                    Visibility="{Binding HasSessions, Converter={StaticResource BoolToVis}}" />
+                        </StackPanel>
+                    </Grid>
+                    <UniformGrid Columns="5" Margin="0,16,0,0" Visibility="{Binding HasSessions, Converter={StaticResource BoolToVis}}">
+                        <StackPanel>
+                            <TextBlock Text="{l:T 'FPS MEDIOS'}" Style="{StaticResource SL.Eyebrow}" />
+                            <TextBlock Text="{Binding Avg}" Style="{StaticResource Num}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="{l:T '1% LOW'}" Style="{StaticResource SL.Eyebrow}" Foreground="{StaticResource Orange}" />
+                            <TextBlock Text="{Binding Low1}" Style="{StaticResource Num}" Foreground="{StaticResource Orange}" />
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="{l:T '0,1% LOW'}" Style="{StaticResource SL.Eyebrow}" Foreground="{StaticResource Orange}" />
+                            <TextBlock Text="{Binding Low01}" Style="{StaticResource Num}" Foreground="{StaticResource Orange}" />
+                        </StackPanel>
+                        <StackPanel Visibility="{Binding HasReal, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{l:T '1% LOW REALES'}" Style="{StaticResource SL.Eyebrow}" Foreground="{StaticResource Yellow}" />
+                            <TextBlock Text="{Binding Low1Real}" Style="{StaticResource Num}" Foreground="{StaticResource Yellow}" />
+                        </StackPanel>
+                        <StackPanel Visibility="{Binding HasReal, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{l:T '0,1% LOW REALES'}" Style="{StaticResource SL.Eyebrow}" Foreground="{StaticResource Yellow}" />
+                            <TextBlock Text="{Binding Low01Real}" Style="{StaticResource Num}" Foreground="{StaticResource Yellow}" />
+                        </StackPanel>
+                    </UniformGrid>
+
+                    <pages:SessionChartsView Height="600" Margin="0,16,0,0" />
+
+                    <TextBlock Text="{Binding SpikesText}" Style="{StaticResource SL.Body}" FontFamily="Cascadia Mono, Consolas, Segoe UI" Margin="0,10,0,0" />
+                    <TextBlock Style="{StaticResource SL.Caption}" Margin="0,4,0,0">
+                        <Run Text="{Binding Temps, Mode=OneWay}" /><Run Text="   " /><Run Text="{Binding Power, Mode=OneWay}" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <!-- Historial -->
+            <Border Style="{StaticResource SL.Card}" Margin="0,0,0,16" Visibility="{Binding HasSessions, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="{l:T 'Historial'}" Style="{StaticResource SL.SectionTitle}" />
+                    <ListBox ItemsSource="{Binding Sessions}" SelectedItem="{Binding Selected, Mode=TwoWay}" Margin="0,10,0,0" MaxHeight="300"
+                             Background="Transparent" BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="110" />
+                                        <ColumnDefinition Width="110" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding When}" Style="{StaticResource SL.Caption}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding Game}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Grid.Column="2" Text="{Binding Duration}" Style="{StaticResource SL.Caption}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3" VerticalAlignment="Center"><Run Text="{Binding Avg, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="{l:T ' FPS'}" Foreground="{DynamicResource SL.TextTertiary}" /></TextBlock>
+                                    <TextBlock Grid.Column="4" VerticalAlignment="Center" Foreground="#FF8A00"><Run Text="{Binding Low1, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="{l:T ' 1% low'}" /></TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <TextBlock Text="{Binding Totals}" Style="{StaticResource SL.Caption}" VerticalAlignment="Center" />
+                        <TextBlock Text="{l:T '· guardar las últimas'}" Style="{StaticResource SL.Caption}" VerticalAlignment="Center" Margin="8,0,6,0" />
+                        <TextBox Text="{Binding Limit, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="90" VerticalContentAlignment="Center" />
+                        <Button Content="{l:T 'Abrir carpeta'}" Command="{Binding OpenFolderCommand}" Style="{StaticResource SL.SubtleButton}" Margin="14,0,0,0" />
+                        <Button Content="{l:T 'Borrar historial'}" Command="{Binding DeleteAllCommand}" Style="{StaticResource SL.SubtleButton}" Margin="8,0,0,0" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SL.Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{l:T 'Gráfica en el juego'}" Style="{StaticResource SL.SectionTitle}" />
+                    <TextBlock Style="{StaticResource SL.Caption}" Margin="0,4,0,0" TextWrapping="Wrap"
+                               Text="{l:T 'Ventana aparte a lo ancho del monitor, independiente del overlay. Línea naranja: frames a pantalla; amarilla: frames reales (solo con Reflex).'}" />
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <CheckBox Content="{l:T 'Mostrar la gráfica'}" IsChecked="{Binding Settings.GraphVisible, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,20,0" />
+                        <TextBlock Text="{l:T 'Tecla:'}" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                        <Button Content="{Binding Settings.GraphHotkeyText}" Command="{Binding Settings.CaptureGraphHotkeyCommand}" Style="{StaticResource SL.SubtleButton}" MinWidth="150" />
+                        <TextBlock Text="{Binding Settings.GraphHotkeyStatus}" Style="{StaticResource SL.Caption}" Foreground="{DynamicResource SL.Warn}" VerticalAlignment="Center" Margin="10,0,0,0" />
+                    </StackPanel>
+                    <Grid Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <Grid>
+                                <TextBlock Text="{l:T 'Alto'}" Style="{StaticResource SL.Label}" />
+                                <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right"><Run Text="{Binding Settings.GraphHeight, Mode=OneWay}" /><Run Text="{l:T ' px'}" /></TextBlock>
+                            </Grid>
+                            <Slider Minimum="60" Maximum="400" TickFrequency="10" IsSnapToTickEnabled="True" Value="{Binding Settings.GraphHeight, Mode=TwoWay}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <Grid>
+                                <TextBlock Text="{l:T 'Ancho'}" Style="{StaticResource SL.Label}" />
+                                <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right"><Run Text="{Binding Settings.GraphWidth, Mode=OneWay}" /><Run Text=" %" /></TextBlock>
+                            </Grid>
+                            <Slider Minimum="20" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="{Binding Settings.GraphWidth, Mode=TwoWay}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="4">
+                            <Grid>
+                                <TextBlock Text="{l:T 'Opacidad del fondo'}" Style="{StaticResource SL.Label}" />
+                                <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right"><Run Text="{Binding Settings.GraphOpacity, Mode=OneWay}" /><Run Text=" %" /></TextBlock>
+                            </Grid>
+                            <Slider Minimum="0" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="{Binding Settings.GraphOpacity, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Grid>
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <TextBlock Text="{l:T 'Posición'}" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                        <Border Style="{StaticResource SL.SegmentHost}">
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Content="{l:T 'Arriba'}" GroupName="GraphPos" Style="{StaticResource SL.Segment}" IsChecked="{Binding Settings.GraphTop, Mode=TwoWay}" />
+                                <RadioButton Content="{l:T 'Abajo'}" GroupName="GraphPos" Style="{StaticResource SL.Segment}" IsChecked="{Binding Settings.GraphBottom, Mode=TwoWay}" />
+                            </StackPanel>
+                        </Border>
+                        <TextBlock Text="{l:T 'Abarca (s)'}" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="30,0,8,0"
+                                   ToolTip="{l:T 'Segundos que se ven en la gráfica y sobre los que se calcula el 1% low (5-60)'}" />
+                        <TextBox Text="{Binding Settings.StatsSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="110" VerticalContentAlignment="Center" />
+                        <TextBlock Text="{l:T 'Refresco (ms)'}" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="24,0,8,0"
+                                   ToolTip="{l:T 'Cada cuántos milisegundos se redibuja la gráfica (100-2000). Por debajo de 250 SpotLay mide más a menudo.'}" />
+                        <TextBox Text="{Binding Settings.GraphRefreshMs, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" Width="120" VerticalContentAlignment="Center" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

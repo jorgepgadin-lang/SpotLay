@@ -1,0 +1,115 @@
+<Window x:Class="SpotLay.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:SpotLay.App.Infrastructure"
+        xmlns:vm="clr-namespace:SpotLay.App.ViewModels"
+        xmlns:pages="clr-namespace:SpotLay.App.Views"
+        Title="{l:T 'SpotLay'}"
+        Width="1320" Height="860" MinWidth="1080" MinHeight="660"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/SpotLay.ico"
+        Background="{DynamicResource SL.Background}"
+        Foreground="{DynamicResource SL.Text}"
+        FontFamily="{StaticResource SL.Font}"
+        UseLayoutRounding="True"
+        TextOptions.TextFormattingMode="Display">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:HomeViewModel}"><pages:HomePage /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:OverlayEditorViewModel}"><pages:OverlayPage /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MetricsViewModel}"><pages:MetricsPage /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ProfilesViewModel}"><pages:ProfilesPage /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}"><pages:SettingsPage /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AlertsViewModel}"><pages:AlertsPage /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PerformanceViewModel}"><pages:PerformancePage /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CoolingViewModel}"><pages:CoolingPage /></DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Barra lateral -->
+        <Border Background="{DynamicResource SL.Sidebar}" BorderBrush="{DynamicResource SL.Stroke}" BorderThickness="0,0,1,0">
+            <DockPanel Margin="12,18,12,14">
+                <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="10,0,0,22">
+                    <Image Source="/Assets/SpotLay.png" Width="30" Height="30" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="{l:T 'SpotLay'}" FontFamily="{StaticResource SL.DisplayFont}" FontSize="18" FontWeight="SemiBold" />
+                        <TextBlock Text="{Binding Version}" Style="{StaticResource SL.Caption}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <ListBox ItemsSource="{Binding Nav}" SelectedItem="{Binding SelectedNav}"
+                         ItemContainerStyle="{StaticResource SL.NavItem}"
+                         Background="Transparent" BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="28" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Glyph}" FontFamily="{StaticResource SL.IconFont}" FontSize="15" VerticalAlignment="Center" />
+                                <TextBlock Grid.Column="1" Text="{Binding Title}" FontSize="14" VerticalAlignment="Center" />
+                                <Border Grid.Column="2" Style="{StaticResource SL.Pill}" Padding="6,1"
+                                        Visibility="{Binding Badge, Converter={StaticResource StringToVis}}">
+                                    <TextBlock Text="{Binding Badge}" FontSize="10" Foreground="{DynamicResource SL.TextTertiary}" />
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
+        </Border>
+
+        <!-- Contenido -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Margin="36,26,36,18">
+                <StackPanel>
+                    <TextBlock Text="{Binding CurrentPage.Title}" Style="{StaticResource SL.PageTitle}" />
+                    <TextBlock Text="{Binding CurrentPage.Subtitle}" Style="{StaticResource SL.PageSubtitle}" Margin="0,4,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <CheckBox Content="{Binding CurrentPage.HeaderOption}" IsChecked="{Binding CurrentPage.HeaderOptionValue, Mode=TwoWay}"
+                              VerticalAlignment="Center" Margin="0,0,12,0"
+                              Visibility="{Binding CurrentPage.HeaderOption, Converter={StaticResource StringToVis}}" />
+                    <Border Style="{StaticResource SL.SegmentHost}"
+                            Visibility="{Binding CurrentPage.HasModes, Converter={StaticResource BoolToVis}}">
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Content="{l:T 'Esencial'}" GroupName="Mode" Style="{StaticResource SL.Segment}"
+                                         IsChecked="{Binding IsEsencial, Mode=TwoWay}"
+                                         ToolTip="{l:T 'Plantillas y ajustes rápidos'}" />
+                            <RadioButton Content="{l:T 'Avanzado'}" GroupName="Mode" Style="{StaticResource SL.Segment}"
+                                         IsChecked="{Binding IsAvanzado, Mode=TwoWay}"
+                                         ToolTip="{l:T 'Todos los sensores, estilos y posiciones'}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Grid>
+
+            <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" Focusable="False" />
+
+            <!-- Versión nueva descargada y verificada. -->
+            <Border Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,8,0,0" Padding="16,8"
+                    CornerRadius="8" Background="{DynamicResource SL.AccentSoft}" BorderBrush="{DynamicResource SL.Accent}" BorderThickness="1"
+                    Visibility="{Binding UpdateVisible, Converter={StaticResource BoolToVis}}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding UpdateText}" VerticalAlignment="Center" Foreground="{DynamicResource SL.Text}" />
+                    <Button Content="{l:T 'Reiniciar SpotLay ahora'}" Style="{StaticResource SL.AccentButton}" Margin="14,0,0,0"
+                            Command="{Binding UpdateNowCommand}" />
+                    <Button Content="{l:T 'Al cerrar SpotLay'}" Style="{StaticResource SL.SubtleButton}" Margin="8,0,0,0"
+                            Command="{Binding UpdateLaterCommand}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

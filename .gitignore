@@ -1,0 +1,14 @@
+bin/
+obj/
+.vs/
+*.user
+*.exe
+*.rar
+*.zip
+publish/
+backups/
+tools/*/logs/
+tools/*-test/
+tools/*.txt
+tools/shots*/
+tools/fg-burst/

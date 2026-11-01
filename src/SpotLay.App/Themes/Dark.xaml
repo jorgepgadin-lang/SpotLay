@@ -1,0 +1,19 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="SL.Background" Color="#0F1115" />
+    <SolidColorBrush x:Key="SL.Sidebar" Color="#0B0D11" />
+    <SolidColorBrush x:Key="SL.Surface" Color="#171A21" />
+    <SolidColorBrush x:Key="SL.SurfaceAlt" Color="#1E222B" />
+    <SolidColorBrush x:Key="SL.SurfaceHover" Color="#252A35" />
+    <SolidColorBrush x:Key="SL.Stroke" Color="#2A2F3A" />
+    <SolidColorBrush x:Key="SL.Text" Color="#F2F4F8" />
+    <SolidColorBrush x:Key="SL.TextSecondary" Color="#A9B1BE" />
+    <SolidColorBrush x:Key="SL.TextTertiary" Color="#6E7684" />
+    <SolidColorBrush x:Key="SL.Accent" Color="#7C8CFF" />
+    <SolidColorBrush x:Key="SL.AccentSoft" Color="#2A2F5A" />
+    <SolidColorBrush x:Key="SL.OnAccent" Color="#0B0D11" />
+    <SolidColorBrush x:Key="SL.Good" Color="#3DDC97" />
+    <SolidColorBrush x:Key="SL.Warn" Color="#FFB547" />
+    <SolidColorBrush x:Key="SL.Bad" Color="#FF5C6C" />
+    <SolidColorBrush x:Key="SL.PreviewBackdrop" Color="#262A33" />
+</ResourceDictionary>

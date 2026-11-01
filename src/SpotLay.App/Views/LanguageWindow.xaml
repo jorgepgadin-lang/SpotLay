@@ -1,0 +1,18 @@
+<Window x:Class="SpotLay.App.Views.LanguageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SpotLay" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen" Background="{DynamicResource SL.Background}">
+    <!-- Primer arranque: se elige el idioma antes de ver nada (en los dos idiomas a la vez). -->
+    <StackPanel Margin="32,28">
+        <TextBlock Text="SpotLay" FontSize="26" FontWeight="SemiBold" Foreground="{DynamicResource SL.Text}" HorizontalAlignment="Center" />
+        <TextBlock Text="Elige el idioma · Choose your language" Style="{StaticResource SL.Caption}" FontSize="14"
+                   HorizontalAlignment="Center" Margin="0,8,0,22" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button x:Name="SpanishButton" Content="Español" MinWidth="150" Padding="16,10" FontSize="16" Click="Spanish_Click" />
+            <Button x:Name="EnglishButton" Content="English" MinWidth="150" Padding="16,10" FontSize="16" Margin="12,0,0,0" Click="English_Click" />
+        </StackPanel>
+        <TextBlock Text="Puedes cambiarlo en Ajustes · You can change it in Settings" Style="{StaticResource SL.Caption}"
+                   HorizontalAlignment="Center" Margin="0,18,0,0" />
+    </StackPanel>
+</Window>

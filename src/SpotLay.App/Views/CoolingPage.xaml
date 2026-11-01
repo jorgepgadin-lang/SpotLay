@@ -1,0 +1,298 @@
+<UserControl x:Class="SpotLay.App.Views.CoolingPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:l="clr-namespace:SpotLay.App.Infrastructure"
+             xmlns:vm="clr-namespace:SpotLay.App.ViewModels"
+             xmlns:pages="clr-namespace:SpotLay.App.Views"
+             x:Name="Root">
+    <UserControl.Resources>
+        <Style x:Key="Section" TargetType="Border" BasedOn="{StaticResource SL.Card}">
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+        <Style x:Key="Field" TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,12,0,0" />
+        </Style>
+        <Style x:Key="Number" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Width" Value="64" />
+            <Setter Property="MinHeight" Value="30" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="36,0,36,32">
+        <StackPanel MaxWidth="1100">
+
+            <!-- Aviso legal -->
+            <Border CornerRadius="8" Padding="14,10" Margin="0,0,0,16" BorderThickness="1" BorderBrush="{DynamicResource SL.Bad}">
+                <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource SL.Bad}" FontSize="12.5">
+                    <Run Text="⚠ " FontWeight="Bold" /><Run Text="{l:T 'Uso bajo tu exclusiva responsabilidad. El control de ventiladores actúa directamente sobre el hardware. SpotLay se ofrece «tal cual», sin garantía de ningún tipo, expresa o implícita, incluidas las de funcionamiento, idoneidad o ausencia de errores. Los autores no serán responsables de daños en el equipo, pérdida de datos, sobrecalentamiento, apagados inesperados ni de ningún otro perjuicio directo o indirecto derivado de su uso o de su mal funcionamiento, en la máxima medida permitida por la ley aplicable. Si no aceptas estas condiciones, no actives esta función.'}" />
+                </TextBlock>
+            </Border>
+
+            <!-- Control general -->
+            <Border Style="{StaticResource Section}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <CheckBox IsChecked="{Binding Enabled, Mode=TwoWay}">
+                            <StackPanel Margin="4,0,0,0">
+                                <TextBlock Text="{l:T 'SpotLay controla los ventiladores marcados'}" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource SL.Text}" />
+                                <TextBlock Text="{l:T 'Desactivado, todos los ventiladores siguen a la BIOS o a la gráfica.'}" Style="{StaticResource SL.Caption}" />
+                            </StackPanel>
+                        </CheckBox>
+                        <TextBlock Text="{Binding Message}" FontSize="13" Margin="0,12,0,0" TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="{DynamicResource SL.TextSecondary}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Conflict}" Value="True">
+                                            <Setter Property="Foreground" Value="{DynamicResource SL.Bad}" />
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <TextBlock Text="{Binding ControlledSummary}" Style="{StaticResource SL.Caption}" Margin="0,4,0,0" />
+                        <TextBlock Text="{l:T 'Abierto con --sin-ventiladores: SpotLay lee los canales pero no escribe en ninguno.'}" Style="{StaticResource SL.Caption}"
+                                   Foreground="{DynamicResource SL.Warn}" Margin="0,4,0,0" Visibility="{Binding WritesBlocked, Converter={StaticResource BoolToVis}}" />
+                        <TextBlock Text="{Binding ActionMessage}" Style="{StaticResource SL.Caption}" Foreground="{DynamicResource SL.Good}" Margin="0,4,0,0"
+                                   Visibility="{Binding ActionMessage, Converter={StaticResource StringToVis}}" />
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="{l:T 'Devolver todo a la BIOS'}" Command="{Binding ReleaseAllCommand}" Style="{StaticResource SL.SubtleButton}"
+                            VerticalAlignment="Top" ToolTip="{l:T 'Desactiva el control y deja todos los ventiladores en automático de fábrica'}" />
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource Section}" Visibility="{Binding NoChannels, Converter={StaticResource BoolToVis}}">
+                <TextBlock Style="{StaticResource SL.Body}" Text="{l:T 'Buscando canales de ventilador… Si no aparece ninguno, el hardware no los expone (revisa PawnIO y el modo PWM/DC en la BIOS).'}" />
+            </Border>
+
+            <ItemsControl ItemsSource="{Binding Channels}">
+                <ItemsControl.ItemContainerStyle>
+                    <Style TargetType="ContentPresenter">
+                        <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVis}}" />
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:FanChannelViewModel}">
+                        <Border Style="{StaticResource Section}" Padding="20,16">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Width="8" Height="8" Margin="0,0,8,0" VerticalAlignment="Center"
+                                                     ToolTip="{l:T 'Verde: SpotLay lo está controlando. Gris: BIOS o gráfica.'}">
+                                                <Ellipse.Style>
+                                                    <Style TargetType="Ellipse">
+                                                        <Setter Property="Fill" Value="{DynamicResource SL.TextTertiary}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Controlled}" Value="True">
+                                                                <Setter Property="Fill" Value="{DynamicResource SL.Good}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Ellipse.Style>
+                                            </Ellipse>
+                                            <TextBlock Text="{Binding Name}" FontSize="15" FontWeight="SemiBold" />
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding Hardware}" Style="{StaticResource SL.Caption}" TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" MinWidth="170">
+                                        <TextBlock FontSize="14" Typography.NumeralAlignment="Tabular">
+                                            <Run Text="{Binding DutyText, Mode=OneWay}" FontWeight="SemiBold" /><Run Text="  ·  " Foreground="{DynamicResource SL.TextTertiary}" /><Run Text="{Binding RpmText, Mode=OneWay}" />
+                                        </TextBlock>
+                                        <TextBlock Style="{StaticResource SL.Caption}">
+                                            <Run Text="{l:T 'Temperatura:'}" /> <Run Text="{Binding TemperatureText, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+
+                                    <CheckBox Grid.Column="2" Content="{l:T 'Controlar con SpotLay'}" IsChecked="{Binding Enabled, Mode=TwoWay}"
+                                              VerticalAlignment="Center" Margin="20,0,0,0" />
+                                    <Button Grid.Column="3" Content="{l:T 'Opciones'}" Command="{Binding ToggleExpandCommand}" Style="{StaticResource SL.SubtleButton}"
+                                            VerticalAlignment="Center" Margin="12,0,0,0" Visibility="{Binding IsAdvanced, Converter={StaticResource BoolToVis}}" />
+                                </Grid>
+
+                                <TextBlock Style="{StaticResource SL.Caption}" Margin="16,8,0,0" TextWrapping="Wrap">
+                                    <Run Text="{Binding Status, Mode=OneWay}" Foreground="{DynamicResource SL.TextSecondary}" />
+                                    <Run Text=" · " /><Run Text="{Binding ModeSummary, Mode=OneWay}" />
+                                    <Run Text="{l:T ' · según '}" /><Run Text="{Binding SourceSummary, Mode=OneWay}" />
+                                </TextBlock>
+
+                                <TextBlock Style="{StaticResource SL.Caption}" Margin="16,6,0,0" Foreground="{DynamicResource SL.Accent}"
+                                           Text="{l:T 'Curvas, identificar y calibrar: cambia a Avanzado (arriba a la derecha).'}">
+                                    <TextBlock.Visibility>
+                                        <MultiBinding Converter="{StaticResource AllTrueToVis}">
+                                            <Binding Path="IsFirst" />
+                                            <Binding Path="IsAdvanced" Converter="{StaticResource Not}" />
+                                        </MultiBinding>
+                                    </TextBlock.Visibility>
+                                </TextBlock>
+
+                                <!-- Opciones avanzadas del canal -->
+                                <Border Margin="0,14,0,0" Padding="16" CornerRadius="8" Background="{DynamicResource SL.SurfaceAlt}">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsAdvanced}" Value="True" />
+                                                        <Condition Binding="{Binding IsExpanded}" Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*" />
+                                            <ColumnDefinition Width="24" />
+                                            <ColumnDefinition Width="2*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel>
+                                            <Border Style="{StaticResource SL.SegmentHost}" HorizontalAlignment="Left">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <RadioButton Content="{l:T 'Curva'}" Style="{StaticResource SL.Segment}" IsChecked="{Binding IsCurve, Mode=TwoWay}" />
+                                                    <RadioButton Content="{l:T 'Velocidad fija'}" Style="{StaticResource SL.Segment}" IsChecked="{Binding IsManual, Mode=TwoWay}" />
+                                                </StackPanel>
+                                            </Border>
+                                            <pages:FanCurveChart Height="220" Margin="0,12,0,0" Points="{Binding Curve}"
+                                                                 CurrentTemperature="{Binding CurrentTemperature}" CurrentDuty="{Binding CurrentDuty}"
+                                                                 Edited="{Binding CurveEdited}"
+                                                                 Visibility="{Binding IsCurve, Converter={StaticResource BoolToVis}}" />
+                                            <TextBlock Text="{l:T 'Arrastra los puntos. La línea naranja es la temperatura actual y el punto, la velocidad que se aplica.'}"
+                                                       Style="{StaticResource SL.Caption}" Margin="0,6,0,0" Visibility="{Binding IsCurve, Converter={StaticResource BoolToVis}}" />
+                                            <StackPanel Style="{StaticResource Field}" Visibility="{Binding IsManual, Converter={StaticResource BoolToVis}}">
+                                                <Grid>
+                                                    <TextBlock Text="{l:T 'Velocidad fija'}" Style="{StaticResource SL.Label}" />
+                                                    <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right"><Run Text="{Binding ManualDuty, Mode=OneWay}" /><Run Text=" %" /></TextBlock>
+                                                </Grid>
+                                                <Slider Minimum="0" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding ManualDuty, Mode=TwoWay, Delay=300}" />
+                                            </StackPanel>
+
+                                            <TextBlock Text="{l:T 'IDENTIFICAR Y CALIBRAR'}" Style="{StaticResource SL.Eyebrow}" Margin="0,20,0,0" />
+                                            <Grid Margin="0,10,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="16" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel>
+                                                    <Grid>
+                                                        <TextBlock Text="{l:T 'Probar a'}" Style="{StaticResource SL.Label}" />
+                                                        <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right"><Run Text="{Binding TestDuty, Mode=OneWay}" /><Run Text=" %" /></TextBlock>
+                                                    </Grid>
+                                                    <Slider Minimum="35" Maximum="100" TickFrequency="5" IsSnapToTickEnabled="True" Value="{Binding TestDuty, Mode=TwoWay}" />
+                                                </StackPanel>
+                                                <StackPanel Grid.Column="2">
+                                                    <Grid>
+                                                        <TextBlock Text="{l:T 'Durante'}" Style="{StaticResource SL.Label}" />
+                                                        <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right"><Run Text="{Binding TestSeconds, Mode=OneWay}" /><Run Text=" s" /></TextBlock>
+                                                    </Grid>
+                                                    <Slider Minimum="2" Maximum="10" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding TestSeconds, Mode=TwoWay}" />
+                                                </StackPanel>
+                                            </Grid>
+                                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                                <Button Content="{l:T 'Identificar'}" Command="{Binding TestCommand}" Style="{StaticResource SL.SubtleButton}"
+                                                        ToolTip="{l:T 'Pone este canal a esa velocidad unos segundos para ver u oír cuál es'}" />
+                                                <Button Content="{l:T 'Parar'}" Command="{Binding StopTestCommand}" Style="{StaticResource SL.SubtleButton}" Margin="6,0,0,0" />
+                                                <Button Content="{l:T 'Calibrar'}" Command="{Binding CalibrateCommand}" Style="{StaticResource SL.SubtleButton}" Margin="16,0,0,0"
+                                                        ToolTip="{l:T 'Mide las RPM de 100 % a 0 % (menos de un minuto; puede pararse un momento) y el máximo real'}" />
+                                                <Button Content="{l:T 'Usar mínimo recomendado'}" Command="{Binding ApplyRecommendedCommand}" Style="{StaticResource SL.SubtleButton}" Margin="6,0,0,0" />
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                                <Button Content="{l:T 'Copiar ajustes'}" Command="{Binding CopySettingsCommand}" Style="{StaticResource SL.SubtleButton}"
+                                                        ToolTip="{l:T 'Copia modo, curva, temperaturas, crítico, histéresis y tiempos (no el nombre ni el mínimo/máximo)'}" />
+                                                <Button Content="{l:T 'Pegar ajustes'}" Command="{Binding PasteSettingsCommand}" Style="{StaticResource SL.SubtleButton}" Margin="6,0,0,0" />
+                                                <Button Content="{l:T 'Pegar en todos'}" Command="{Binding PasteAllCommand}" Style="{StaticResource SL.SubtleButton}" Margin="6,0,0,0"
+                                                        ToolTip="{l:T 'Pega lo copiado en todos los ventiladores marcados para SpotLay'}" />
+                                                <TextBlock Text="{Binding CopiedText}" Style="{StaticResource SL.Caption}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding TestMessage}" Style="{StaticResource SL.Caption}" Margin="0,8,0,0"
+                                                       Visibility="{Binding TestMessage, Converter={StaticResource StringToVis}}" />
+                                            <TextBlock Text="{Binding CalibrationMessage}" Style="{StaticResource SL.Caption}" Margin="0,4,0,0"
+                                                       Visibility="{Binding CalibrationMessage, Converter={StaticResource StringToVis}}" />
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="2">
+                                            <StackPanel>
+                                                <TextBlock Text="{l:T 'Nombre'}" Style="{StaticResource SL.Label}" />
+                                                <TextBox Text="{Binding Label, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Field}">
+                                                <TextBlock Text="{l:T 'Temperatura que manda'}" Style="{StaticResource SL.Label}" />
+                                                <ComboBox ItemsSource="{Binding DataContext.TemperatureSources, ElementName=Root}" SelectedValuePath="Key" DisplayMemberPath="Label"
+                                                          SelectedValue="{Binding TemperatureSourceId, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Field}">
+                                                <TextBlock Text="{l:T 'Segunda temperatura'}" Style="{StaticResource SL.Label}" />
+                                                <ComboBox ItemsSource="{Binding DataContext.SecondarySources, ElementName=Root}" SelectedValuePath="Key" DisplayMemberPath="Label"
+                                                          SelectedValue="{Binding SecondaryTemperatureSourceId, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Field}">
+                                                <TextBlock Text="{l:T 'Si hay dos, usar'}" Style="{StaticResource SL.Label}" />
+                                                <ComboBox ItemsSource="{Binding DataContext.MixOptions, ElementName=Root}" SelectedValuePath="Key" DisplayMemberPath="Label"
+                                                          SelectedValue="{Binding MixMode, Mode=TwoWay}" />
+                                            </StackPanel>
+                                            <StackPanel Style="{StaticResource Field}">
+                                                <Grid>
+                                                    <TextBlock Text="{l:T 'Mínimo / máximo'}" Style="{StaticResource SL.Label}" />
+                                                    <TextBlock Style="{StaticResource SL.Caption}" HorizontalAlignment="Right">
+                                                        <Run Text="{Binding MinimumDuty, Mode=OneWay}" /><Run Text=" % / " /><Run Text="{Binding MaximumDuty, Mode=OneWay}" /><Run Text=" %" />
+                                                    </TextBlock>
+                                                </Grid>
+                                                <Slider Minimum="0" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding MinimumDuty, Mode=TwoWay, Delay=300}" />
+                                                <Slider Minimum="0" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding MaximumDuty, Mode=TwoWay, Delay=300}" Margin="0,6,0,0" />
+                                            </StackPanel>
+                                            <Grid Margin="0,12,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <TextBlock Text="{l:T 'Crítico (a tope)'}" Style="{StaticResource SL.Body}" VerticalAlignment="Center"
+                                                           ToolTip="{l:T 'A esta temperatura el canal va al máximo al instante, sin rampa'}" />
+                                                <TextBox Grid.Column="1" Style="{StaticResource Number}" Text="{Binding CriticalTemperature, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                                <TextBlock Grid.Column="2" Text="°C" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="6,0,0,0" />
+                                                <TextBlock Grid.Row="1" Text="{l:T 'Histéresis'}" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="0,6,0,0"
+                                                           ToolTip="{l:T 'Cambio mínimo de temperatura para mover la velocidad (evita subidas y bajadas constantes)'}" />
+                                                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Number}" Margin="0,6,0,0" Text="{Binding Hysteresis, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                                <TextBlock Grid.Row="1" Grid.Column="2" Text="°C" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="6,6,0,0" />
+                                                <TextBlock Grid.Row="2" Text="{l:T 'Subida de 0 a 100 %'}" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="0,6,0,0" />
+                                                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Number}" Margin="0,6,0,0" Text="{Binding ResponseUpSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                                <TextBlock Grid.Row="2" Grid.Column="2" Text="s" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="6,6,0,0" />
+                                                <TextBlock Grid.Row="3" Text="{l:T 'Bajada de 100 a 0 %'}" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="0,6,0,0" />
+                                                <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Number}" Margin="0,6,0,0" Text="{Binding ResponseDownSeconds, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                                <TextBlock Grid.Row="3" Grid.Column="2" Text="s" Style="{StaticResource SL.Body}" VerticalAlignment="Center" Margin="6,6,0,0" />
+                                            </Grid>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
